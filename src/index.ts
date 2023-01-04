@@ -1,14 +1,24 @@
-// Exercicio 1:
-// instalando typescript: npm i typescript -D
-// instalando a tipagem do node: npm install --save-dev @types/node
-// criar o arquivo de configuracao do typescript: npx tsc --init
+import { users, products, purchases, createUser, getAllUsers, createProduct, getAllProducts, getProductById, queryProductsByName, createPurchase, getAllPurchasesFromUserId } from "./database";
+import { ProductCategory } from "./type";
 
-import { users, products, purchases } from "./database";
+// console.log(users);
+// console.log(products);
+// console.log(purchases);
 
-//Exercicio 3: 
-//Importar as constantes users, products e purchases. Testar elas com um console.log.
-console.log(users);
-console.log(products);
-console.log(purchases);
+//Exercicio 2: chamando funções
+//user
+createUser("Matheus", "matheus@gmail.com", "matheus1234")
+console.log(getAllUsers(users));
 
+//product
+createProduct("03", "Condicionador", 20, ProductCategory.PERSONAL_HYGIENE)
+console.log(getAllProducts(products));
+console.log(getProductById("02"))
 
+//Exercicio 3: chamando mais funções
+//product
+console.log(queryProductsByName("shampoo"));
+
+//purchase
+createPurchase("Matheus", "01", 2, 80)
+console.log(getAllPurchasesFromUserId("Bruno"));

@@ -1,3 +1,10 @@
+//Exercicio 1
+//Refatore o type da entidade product no types.ts
+export enum ProductCategory {
+    COSMETIC = "Cosmético",
+    PERSONAL_HYGIENE = "Higiene Pessoal"
+}
+
 // user
 export type TUser = {
     id: string
@@ -10,7 +17,7 @@ export type TProduct = {
     id: string
     name: string
     price: number
-    category: string
+    category: ProductCategory
 }
 
 // purchase
