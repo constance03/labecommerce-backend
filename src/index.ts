@@ -1,15 +1,9 @@
-import { users, products, purchases, createUser, getAllUsers, createProduct, getAllProducts, getProductById, queryProductsByName, createPurchase, getAllPurchasesFromUserId } from "./database";
-import { ProductCategory } from "./type";
+import { users, products, purchases } from "./database";
 //além de importar o express, também precisamos importar os objetos Request e Response
 import  express, { Request, Response} from 'express'
 // importar cors
 import cors from 'cors';
-
-
-
-// console.log(users);
-// console.log(products);
-// console.log(purchases);
+import { ProductCategory } from "./type";
 
 // exercicio 1 
     // instalar express
@@ -120,3 +114,94 @@ app.post('/purchases', (req: Request, res: Response) => {
     res.status(201).send("Compra realizada com sucesso")
 })
 
+
+
+// -----------------------------------------------------------------------------------
+
+//Aprofundamento express
+    // exercicio 1
+//produtos por id
+app.get('/products:id', (req: Request, res: Response) => {
+    const id = req.params.id
+
+    const productFound = products.find((product) => product.id === id)
+
+    res.status(200).send(productFound)
+})
+
+//compras por id do usuario
+app.get('/users/:id/purchases', (req: Request, res: Response) => {
+    const id = req.params.id
+
+    const purchaseFound = purchases.find((purchase) => purchase.userId.toLowerCase() === id.toLowerCase())
+
+    res.status(200).send(purchaseFound)
+})
+
+    // exercicio 2 
+//deletar usuario por id
+app.delete('/users/:id', (req: Request, res: Response) => {
+    const id = req.params.id
+
+    const indexToRemove = users.findIndex((user) => user.id === id)
+
+    if (indexToRemove >= 0) {
+        users.splice(indexToRemove, 1)
+    }
+
+    res.status(200).send("User apagado com sucesso")
+})
+
+//deletar produto por id
+app.delete('/products/:id', (req: Request, res: Response) => {
+    const id = req.params.id
+
+    const indexToRemove = products.findIndex((product) => product.id === id)
+
+    if (indexToRemove >= 0) {
+        products.splice(indexToRemove, 1)
+    }
+
+    res.status(200).send("Produto apagado com sucesso")
+})
+
+ // exercicio 2 
+//editar usuario por id
+app.put('/users/:id', (req: Request, res: Response) => {
+    const id = req.params.id
+
+    const newId = req.body.id as string | undefined
+    const newEmail = req.body.email as string | undefined
+    const newPassword = req.body.password as string | undefined
+
+    const user = users.find((user) => user.id === id)
+
+    if (user) {
+        user.id = newId || user.id
+        user.email = newEmail || user.email
+        user.password = newPassword || user.password
+    }
+
+    res.status(200).send("Cadastro atualizado com sucesso")
+})
+
+//editar produto por id
+app.put('/products/:id', (req: Request, res: Response) => {
+    const id = req.params.id
+
+    const newId = req.body.id as string | undefined
+    const newName = req.body.name as string | undefined
+    const newPrice = req.body.price as number | undefined
+    const newCategory = req.body.category as ProductCategory | undefined
+
+    const product = products.find((product) => product.id === id)
+
+    if (product) {
+        product.id = newId || product.id
+        product.name = newName || product.name
+        product.price = isNaN(newPrice) ? product.price : newPrice
+        product.category = newCategory || product.category
+    }
+
+    res.status(200).send("Produto atualizado com sucesso")
+})
