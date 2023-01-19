@@ -7,14 +7,9 @@ CREATE TABLE users (
 
 -- popular com pelo menos 3 usuarios
 INSERT INTO users(id, email, password)
-VALUES ("Maria", "maria@gmail.com", "maria123");
-
-INSERT INTO users(id, email, password)
-VALUES ("Veronica", "veronica@gmail.com", "veronica123");
-
-INSERT INTO users(id, email, password)
-VALUES ("Bruno", "bruno@gmail.com", "bruno123");
-
+VALUES ("Maria", "maria@gmail.com", "maria123"), 
+("Veronica", "veronica@gmail.com", "veronica123"), 
+("Bruno", "bruno@gmail.com", "bruno123");
 
 -- criar tabela de produtos
 CREATE TABLE products (
@@ -25,19 +20,11 @@ CREATE TABLE products (
 
 -- popular tabela com 5 produtos
 INSERT INTO products(id, name, price, category)
-VALUES ("01", "Condicionador", 20, "Higiene Pessoal");
-
-INSERT INTO products(id, name, price, category)
-VALUES ("02", "Shampoo", 22, "Higiene Pessoal");
-
-INSERT INTO products(id, name, price, category)
-VALUES ("03", "Creme", 30, "Cosmético");
-
-INSERT INTO products(id, name, price, category)
-VALUES ("04", "Perfume", 100, "Cosmético");
-
-INSERT INTO products(id, name, price, category)
-VALUES ("05", "Desodorante", 14, "Higiene Pessoal");
+VALUES ("01", "Condicionador", 20, "Higiene Pessoal"),
+("02", "Shampoo", 22, "Higiene Pessoal"),
+("03", "Creme", 30, "Cosmético"),
+("04", "Perfume", 100, "Cosmético"),
+("05", "Desodorante", 14, "Higiene Pessoal");
 
 
 -- aprofundamento sql
@@ -97,3 +84,34 @@ LIMIT 20 OFFSET 0;
 SELECT * FROM products
 WHERE price >= 100 AND price <= 300
 ORDER BY price ASC;
+
+--------------------------------------------------------------------------
+-- exercicios relacoes sql
+    -- exercicio 1
+-- criar tabela de pedidos
+CREATE TABLE purchases (
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    total_price REAL NOT NULL,
+    paid INTEGER NOT NULL, -- usar 1 para true e 0 para false
+    delivered_at TEXT,
+    buyer_id TEXT NOT NULL,
+    FOREIGN KEY (buyer_id) REFERENCES users (id)
+);
+
+    -- exercicio 2
+-- criar dois pedidos para cada usuario cadastrado
+INSERT INTO purchases (id, total_price, paid, delivered_at, buyer_id)
+VALUES ("p001", 50, 1, null, "Maria"),
+("p002", 30, 0, null, "Maria"),
+("p003", 80, 1, null, "Bruno"),
+("p004", 100, 0, null, "Bruno");
+
+-- editar status de um pedido para entregue na hora atual
+UPDATE purchases
+SET delivered_at = "" --datetime
+WHERE id = "p002";
+
+    -- exercicio 3
+-- criar query de consulta de compras de um usuario, usando id do comprador
+SELECT * FROM purchases
+WHERE buyer_id = "Maria";
