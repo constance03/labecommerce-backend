@@ -108,10 +108,37 @@ VALUES ("p001", 50, 1, null, "Maria"),
 
 -- editar status de um pedido para entregue na hora atual
 UPDATE purchases
-SET delivered_at = "" --datetime
+SET delivered_at = DATETIME('now', 'localtime')
 WHERE id = "p002";
 
     -- exercicio 3
 -- criar query de consulta de compras de um usuario, usando id do comprador
 SELECT * FROM purchases
 WHERE buyer_id = "Maria";
+
+---------------------------------------------------------------------------------------
+--- relacoes sql 2
+    --ex 1
+-- criar tabela de relacao purchases_products
+CREATE TABLE purchases_products (
+    purchase_id TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    quantity INTEGER NOT NULL,
+    FOREIGN KEY (purchase_id) REFERENCES purchases(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+DROP TABLE purchases_products;
+
+INSERT INTO purchases_products (purchase_id, product_id, quantity)
+VALUES
+    ("p002", "04", 3),
+    ("p004", "02", 1),
+    ("p003", "01", 7);
+
+SELECT * FROM purchases_products
+INNER JOIN purchases
+ON purchases_products.purchase_id = purchases.id
+INNER JOIN products
+ON purchases_products.product_id = products.id;
+
