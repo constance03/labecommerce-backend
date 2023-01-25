@@ -4,6 +4,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 // importar a connection
 import { db } from "./database/knex"
+import { products } from "./database";
 
 // exercicio 1
 // instalar express
@@ -42,9 +43,7 @@ app.listen(3003, () => {
 //getAllUsers
 app.get("/users", async (req: Request, res: Response) => {
   try {
-      const result = await db.raw(`
-          SELECT * FROM users;
-      `)
+      const result = await db("users")
       res.status(200).send({usuarios: result})
   } catch (error) {
       console.log(error)
@@ -64,9 +63,7 @@ app.get("/users", async (req: Request, res: Response) => {
 //getAllProducts
 app.get("/products", async (req: Request, res: Response) => {
   try {
-      const result = await db.raw(`
-          SELECT * FROM products;
-      `)
+      const result = await db.raw("products")
       res.status(200).send({produtos: result})
   } catch (error) {
       console.log(error)
@@ -86,9 +83,7 @@ app.get("/products", async (req: Request, res: Response) => {
 //getAllPurchases
 app.get("/purchases", async (req: Request, res: Response) => {
   try {
-      const result = await db.raw(`
-          SELECT * FROM purchases;
-      `)
+      const result = await db("purchases")
       res.status(200).send({compras: result})
   } catch (error) {
       console.log(error)
@@ -105,15 +100,12 @@ app.get("/purchases", async (req: Request, res: Response) => {
   }
 })
 
-
 //searchProductByName
 app.get("/products/search", async (req: Request, res: Response) => {
   try {
       const q = req.query.q as string;
-      const result = await db.raw(`
-          SELECT * FROM products
-          WHERE name LIKE "%${q}%";
-      `)
+
+      const result = await db("products").where("name", "LIKE", `%${q}%`)
 
         if (q.length < 1) {
             res.status(404);
@@ -162,10 +154,13 @@ app.post("/users", async (req: Request, res: Response) => {
           throw new Error("'id', 'email' ou 'password' devem ter no mínimo 1 caractere")
       }
 
-      await db.raw(`
-          INSERT INTO users (id, email, password)
-          VALUES ("${id}", "${email}", "${password}");
-      `)
+        const newUser = { 
+            id, 
+            email, 
+            password
+        }
+
+        await db("users").insert(newUser)
 
       res.status(200).send(`Cadastrado realizado com sucesso`)
 
@@ -214,10 +209,14 @@ app.post("/products", async (req: Request, res: Response) => {
           throw new Error("'id', 'name', 'price' ou 'category' devem ter no mínimo 1 caractere")
       }
 
-      await db.raw(`
-          INSERT INTO products (id, name, price, category)
-          VALUES ("${id}", "${name}", "${price}", "${category}");
-      `)
+      const newProduct = { 
+        id, 
+        name, 
+        price, 
+        category
+    }
+
+    await db("products").insert(newProduct)
 
       res.status(200).send(`Produto cadastrado com sucesso`)
 
@@ -271,6 +270,16 @@ app.post("/purchases", async (req: Request, res: Response) => {
           VALUES ("${id}", "${total_price}", "${paid}", "${delivered_at}", "${buyer_id}");
       `)
 
+        const newPurchase = { 
+            id, 
+            total_price, 
+            paid, 
+            delivered_at, 
+            buyer_id
+        }
+        
+        await db("users").insert(newPurchase)
+
       res.status(200).send(`Compra cadastrada com sucesso`)
 
   } catch (error) {
@@ -294,10 +303,7 @@ app.get("/products/:id", async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
 
-      const result = await db.raw(`
-        SELECT * FROM products
-        WHERE id = "${id}";
-      `)
+      const result = await db("products").where({id: id})
 
       res.status(200).send({produto: result})
   } catch (error) {
@@ -320,10 +326,7 @@ app.get("/users/:id/purchases", async (req: Request, res: Response) => {
   try {
     const user_id = req.params.id;
 
-      const result = await db.raw(`
-        SELECT * FROM purchases
-        WHERE buyer_id = "${user_id}";
-      `)
+      const result = await db("purchases").where({buyer_id: user_id})
 
       res.status(200).send({compras: result})
   } catch (error) {
@@ -340,3 +343,38 @@ app.get("/users/:id/purchases", async (req: Request, res: Response) => {
       }
   }
 })
+
+// =====================================================================================================================
+// aprofundamento knex
+    // exercicio 1 - refatorar tudo com query
+    // exercicio 2
+// getPurchaseById
+app.get("/purchases/:id", async (req: Request, res: Response) => {
+    try {
+        const id_purchase = req.params.id
+        const boughtProducts = await db.select("purchases_products.product_id", "products.*")
+        .from("purchases_products")
+        .leftJoin("products", "purchases_products.product_id", "products.id")
+        .where({purchase_id: id_purchase})
+
+        const result = await db.select("purchases.*", "users.email", "users.id")
+        .from("purchases")
+        .leftJoin("users", "purchases.buyer_id", "users.id")
+        .where({"purchases.id": id_purchase})
+
+        res.status(200).send({"compra": result, "produtos": boughtProducts})
+
+    } catch (error) {
+        console.log(error)
+  
+        if (req.statusCode === 200) {
+            res.status(500)
+        }
+  
+        if (error instanceof Error) {
+            res.send(error.message)
+        } else {
+            res.send("Erro inesperado")
+        }
+    }
+  })
