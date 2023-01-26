@@ -5,23 +5,29 @@ O projeto é um banco de dados com o intuito de acessar e modificar informaçõe
 ## **Índice**
 - <a href="#funcionalidades-do-projeto">Funcionalidades do projeto</a>
 - <a href="#layout">Layout</a>
-- <a href="#demonstração">Demonstração</a>
+- <a href="#documentação">Documentação</a>
 - <a href="#como-rodar-esse-projeto">Como rodar esse projeto?</a>
 - <a href="#tecnologias-utilizadas">Tecnologias utilizadas</a>
 - <a href="#pessoas-autoras">Pessoas autoras</a>
 
 ## **Funcionalidades do projeto**
-- [x] Lista na página inicial com produtos
-- [x] Filtros: nome, menor valor e valor máximo
-- [x] Botão de adicionar o item ao carrinho
-- [x] Carrinho: aumentar/diminuir quantidade de produtos, excluir produto, ir para a página de Checkout
-- [x] Página de Checkout com formulários de cadastro e pagamento
+- [x] Get all users
+- [x] Create user
+- [x] Delete user by id
+- [x] Get all products
+- [x] Get product by name
+- [x] Edit product by id
+- [x] Delete product by id
+- [x] Create purchase
+- [x] Get purchase by id
+- [x] Delete purchase by id
 
 ## **Layout**
 
+<img style="width:600px" src="./src/assets/diagram.png" alt="imagem de diagrama">
 
-## **Demonstração**
-
+## Documentação
+[Documentação no Postman](https://documenter.getpostman.com/view/24460792/2s8ZDeSyPY)
 
 ## **Como rodar esse projeto?**
 
@@ -36,17 +42,18 @@ $ cd projeto-labecommerce
 $ npm install 
 
 # Execute a aplicação
-$ npm start
-
+$ npm run dev
 ```
 
 ## **Tecnologias utilizadas**
-
 1. [Typescript](https://www.typescriptlang.org/)
-2. [MySQL](https://www.mysql.com/)
+2. [SQLite](https://www.sqlite.org/index.html)
+3. [NodeJS](https://nodejs.org/)
+4. [Express](https://expressjs.com/pt-br/)
+5. [Knex](https://knexjs.org/)
+6. [Postman](https://www.postman.com/)
 
 ## **Pessoas autoras**
-
 <img style="width:200px" src="./src/assets/photo.png" alt="imagem de desenvolvedora">
 
 [Linkedin](https://www.linkedin.com/in/mariaconstance/)
